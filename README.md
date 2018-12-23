@@ -7,4 +7,4 @@ Based on the main [Docker Compose setup](https://github.com/okfn/docker-ckan) fo
 These images and Docker Compose files are used to deploy the US Deparment of Education web app. There are different compose files based on the environment.
 
 For documentation/issues/etc please visit:
-- https://github.com/CivicActions/ckanext-ed
+- https://github.com/ViderumGlobal/ckanext-nav

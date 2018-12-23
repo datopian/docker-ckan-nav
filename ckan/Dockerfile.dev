@@ -1,5 +1,4 @@
-FROM keitaro/ckan:2.6.6-uwsgi
-MAINTAINER Keitaro <info@keitaro.com>
+  FROM viderum/ckan:2.6.6-uwsgi
 
 # Install libxml2
 RUN apk add --no-cache libxml2 \
@@ -29,10 +28,11 @@ RUN pip install --no-cache-dir git+https://github.com/okfn/ckanext-sentry.git#eg
     pip install -r ${APP_DIR}/src/ckanext-dcat/requirements.txt && \
     pip install -e git+https://github.com/ckan/ckanext-scheming.git@release-1.0.0#egg=ckanext-scheming && \
     pip install -r ${APP_DIR}/src/ckanext-scheming/requirements.txt && \
-    pip install -e git+https://github.com/vegvesen/ckanext-dcat_ap_no.git#egg=ckanext-dcat_ap_no
+    pip install -e git+https://github.com/ViderumGlobal/ckanext-dcat_ap_no.git#egg=ckanext-dcat_ap_no
 
 # Install project extension
 RUN pip install --no-cache-dir git+https://github.com/ViderumGlobal/ckanext-nav.git#egg=ckanext-nav
+
 
 # Apply patches
 COPY patches ${APP_DIR}/patches
@@ -43,13 +43,11 @@ RUN for d in $APP_DIR/patches/*; do \
         done ; \
     done
 
-# Dirty fix for https://github.com/ckan/ckan/issues/3610RUN
-# RUN sed -i "s/filename = re.sub(ur'-+', u'-', filename)//g" /srv/app/src/ckan/ckan/lib/munge.py
 
 # Copy config files
 COPY crontabs/* /etc/crontabs/
 COPY docker-entrypoint.d/* /docker-entrypoint.d/
 COPY supervisor.d/* /etc/supervisord.d/
 
-# Load envvars plugin on ini file
-# RUN paster --plugin=ckan config-tool ${APP_DIR}/production.ini "ckan.plugins = ${CKAN__PLUGINS}"
+ENV CKAN__PLUGINS image_view text_view recline_view datastore datapusher envvars sentry pages resource_proxy geojson_view nav viderum geo_view dcat scheming_datasets
+RUN paster --plugin=ckan config-tool ${APP_DIR}/production.ini "ckan.plugins = ${CKAN__PLUGINS}"
